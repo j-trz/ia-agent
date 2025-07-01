@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mcp",
+        "responseMode": "onReceived"
+      },
+      "id": "Webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extrae el mensaje del formato MCP\nconst mcp = items[0].json;\nreturn [{\n  json: {\n    prompt: mcp.input || mcp.query || mcp.message || \"Hola, IA!\"\n  }\n}];"
+      },
+      "id": "Function1",
+      "name": "MCP a Prompt",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=AIzaSyDUHQl-jRi8xtd3nL-2J662lS_iv4MXitA",
+        "method": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"{{$json.prompt}}\" }\n      ]\n    }\n  ]\n}"
+      },
+      "id": "HTTPRequest",
+      "name": "Gemini API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Adapta la respuesta de Gemini al formato MCP\nconst gemini = items[0].json;\nconst text = gemini.candidates?.[0]?.content?.parts?.[0]?.text || \"Sin respuesta\";\nreturn [{\n  json: {\n    output: text,\n    mcp: true\n  }\n}];"
+      },
+      "id": "Function2",
+      "name": "Respuesta MCP",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "responseData": "firstInputItem",
+        "responseCode": 200
+      },
+      "id": "RespondToWebhook",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "MCP a Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP a Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini API": {
+      "main": [
+        [
+          {
+            "node": "Respuesta MCP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta MCP": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
