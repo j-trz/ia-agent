@@ -2,99 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+/* :root y estilos base de Vite pueden permanecer si no interfieren directamente,
+   o ser ajustados. Por ahora, los dejaremos y aplicaremos estilos específicos
+   para la interfaz de chat. Tailwind @apply se usará para consistencia. */
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  @apply bg-gray-200 flex justify-center items-center min-h-screen p-0 sm:p-4 m-0;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; /* Mantener consistencia de fuente */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Contenedor principal de la aplicación de chat */
+#chat-app-container { /* Asumiendo que este es el nuevo contenedor principal en index.html */
+  @apply w-full h-screen sm:h-auto sm:max-w-2xl bg-white shadow-xl rounded-none sm:rounded-lg flex flex-col overflow-hidden;
+  /* Altura completa en móviles, altura auto con max en pantallas más grandes */
+  /* max-height en sm y superior para evitar que sea demasiado alto */
+  height: 100vh; /* Por defecto para llenar la pantalla del móvil */
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@media (min-width: 640px) { /* sm breakpoint de Tailwind */
+  #chat-app-container {
+    max-height: calc(100vh - 4rem); /* ej. 90vh o una altura específica como 700px */
+    height: auto; /* Permite que crezca con el contenido hasta max-height */
+  }
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #f7df1eaa);
+
+/* Historial de mensajes del chat */
+#chat-historial {
+  @apply flex-grow p-4 space-y-3 overflow-y-auto; /* space-y-3 para un poco más de espacio */
+  /* Los colores de fondo y texto de las burbujas ya están definidos en main.js con Tailwind */
 }
 
-.card {
-  padding: 2em;
+/* Estilos para las burbujas de mensajes (complementando Tailwind desde main.js) */
+.message-bubble > div { /* El div interno de la burbuja que contiene el texto/HTML */
+  word-break: break-word; /* Asegura que el texto largo se ajuste y no rompa el layout */
+  /* max-width, padding, rounded, shadow ya se aplican en main.js */
 }
 
-.read-the-docs {
-  color: #888;
+/* Formulario de entrada de mensajes */
+#form-vuelos { /* Reutilizando el ID existente, pero podría ser #chat-form */
+  @apply p-3 border-t border-gray-200 bg-gray-50;
 }
 
-button {
-  border-radius: 8px;
+#form-vuelos .flex { /* El div flex que envuelve input y button */
+  @apply gap-2;
+}
+
+#form-vuelos input[type="text"] {
+  @apply flex-grow border border-gray-300 rounded-lg px-3 py-2 text-sm;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  /* Quitar el color de fondo oscuro por defecto de :root si afecta */
+  background-color: #fff; /* Asegurar fondo blanco para input en modo oscuro */
+  color: #333; /* Asegurar texto oscuro para input en modo oscuro */
+}
+
+#form-vuelos button[type="submit"] {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md;
+  @apply transition duration-150 ease-in-out;
+  /* Resetear algunos estilos de botón por defecto de Vite si es necesario */
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: transparent; /* Prevenir que el hover por defecto de Vite interfiera */
 }
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid theme('colors.blue.500'); /* Adaptar focus ring */
+  outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+
+/* Estilos para el scrollbar (opcional, para mejorar apariencia) */
+#chat-historial::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat-historial::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+  border-radius: 10px;
+}
+
+#chat-historial::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-lg; /* Un poco más claro que antes */
+}
+
+#chat-historial::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400; /* Un poco más claro que antes */
+}
+
+/* Limpiar algunos estilos globales de Vite que podrían interferir con el layout de chat */
+#app { /* Si #app es el contenedor del #chat-app-container */
+  max-width: none; /* Permitir que #chat-app-container defina su propio ancho */
+  margin: 0;
+  padding: 0;
+  text-align: left; /* Resetear text-align center si no se desea */
+}
+
+h1 { /* Si no se usa h1 en el chat, se puede ignorar o ajustar */
+  /* font-size: 3.2em; */
+  /* line-height: 1.1; */
+}
+
+/* Mantener el modo oscuro de Vite si se desea, pero asegurar que los componentes del chat
+   tengan los colores correctos. Las clases de Tailwind para bg y text en main.js
+   deberían manejar esto bien para las burbujas. El input y el botón se han ajustado arriba. */
+@media (prefers-color-scheme: dark) {
+  body {
+    @apply bg-gray-800; /* Un fondo más oscuro para el body en modo oscuro */
   }
-  a:hover {
-    color: #747bff;
+
+  #chat-app-container {
+    @apply bg-gray-700 shadow-xl; /* Contenedor del chat un poco más oscuro */
   }
-  button {
-    background-color: #f9f9f9;
+
+  #chat-historial {
+    /* Las burbujas ya tienen sus propios colores definidos en main.js */
+  }
+  #chat-historial::-webkit-scrollbar-track {
+    @apply bg-gray-600;
+  }
+  #chat-historial::-webkit-scrollbar-thumb {
+    @apply bg-gray-500;
+  }
+  #chat-historial::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+
+  #form-vuelos {
+    @apply border-gray-600 bg-gray-750; /* Ligeramente diferente para el formulario */
+  }
+
+  #form-vuelos input[type="text"] {
+    @apply bg-gray-600 border-gray-500 text-gray-50;
+    @apply focus:ring-blue-500;
   }
 }
