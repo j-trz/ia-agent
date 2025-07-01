@@ -40,6 +40,12 @@ function renderChatBubble(content, sender = 'ia', isHtml = false) {
 
 // Función para añadir mensaje al chat y hacer scroll
 function addMessageToChat(element) {
+  console.log('addMessageToChat: chatHistorial element:', chatHistorial);
+  if (element && typeof element.outerHTML === 'string') {
+    console.log('addMessageToChat: Elemento HTML a añadir:', element.outerHTML);
+  } else {
+    console.log('addMessageToChat: Elemento a añadir (no es un elemento HTML estándar o es nulo):', element);
+  }
   chatHistorial.appendChild(element);
   chatHistorial.scrollTop = chatHistorial.scrollHeight; // Auto-scroll
 }
@@ -98,10 +104,21 @@ function renderResultJson(json) {
 }
 
 function renderAnyResultForChat(json) {
+  console.log("renderAnyResultForChat recibió:", JSON.stringify(json, null, 2)); // Log para ver la entrada completa
+
   const tabla = extraerTablaMarkdown(json);
-  if (tabla) return renderResultTable(tabla);
+  if (tabla) {
+    console.log("renderAnyResultForChat: Detectada tabla. Contenido:", tabla);
+    return renderResultTable(tabla);
+  }
+
   const texto = extraerTextoPlano(json);
-  if (texto) return renderResultPlainText(texto);
+  if (texto) {
+    console.log("renderAnyResultForChat: Detectado texto plano. Contenido:", texto);
+    return renderResultPlainText(texto);
+  }
+
+  console.log("renderAnyResultForChat: No se detectó tabla ni texto plano. Renderizando como JSON crudo.");
   return renderResultJson(json);
 }
 
@@ -127,6 +144,7 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify({ input: userMsgText })
     });
     const jsonResponse = await res.json();
+    console.log('Respuesta de n8n (fetch):', JSON.stringify(jsonResponse, null, 2)); // LOG RESPUESTA CRUDA
 
     // 3. Eliminar spinner y mostrar respuesta de la IA
     document.getElementById('thinking-bubble')?.remove();
