@@ -14,7 +14,7 @@
     },
     {
       "parameters": {
-        "functionCode": "// Extrae el mensaje del formato MCP\nconst mcp = items[0].json;\nreturn [{\n  json: {\n    prompt: mcp.input || mcp.query || mcp.message || \"Hola, IA!\"\n  }\n}];"
+        "functionCode": "// Extrae el mensaje del formato MCP y construye un prompt detallado\nconst mcp = items[0].json;\nconst userInput = mcp.input || mcp.query || mcp.message || \"Información general\";\n\nconst detailedPrompt = `Eres un agente de viajes IA experto. El usuario te proporcionará una solicitud de búsqueda de vuelos en lenguaje natural.\nTu objetivo es analizar su solicitud y devolver los resultados de vuelos en una tabla Markdown.\nLa tabla debe incluir las columnas: Aerolínea, Precio (USD), Duración Total, Escalas, Ruta.\nPrioriza la información más económica y asegúrate de que la respuesta sea únicamente la tabla Markdown.\n\nSolicitud del usuario: \"${userInput}\"\n\nProporciona únicamente la tabla Markdown como respuesta, comenzando con la cabecera de la tabla (ej. | Aerolínea | Precio...).`;\n\nreturn [{\n  json: {\n    prompt: detailedPrompt\n  }\n}];"
       },
       "id": "Function1",
       "name": "MCP a Prompt",
@@ -39,7 +39,7 @@
     },
     {
       "parameters": {
-        "functionCode": "// Adapta la respuesta de Gemini al formato MCP\nconst gemini = items[0].json;\nconst text = gemini.candidates?.[0]?.content?.parts?.[0]?.text || \"Sin respuesta\";\nreturn [{\n  json: {\n    output: text,\n    mcp: true\n  }\n}];"
+        "functionCode": "// Adapta la respuesta de Gemini al formato MCP con mejor manejo de errores\nconst geminiResponse = items[0].json;\nlet outputText = \"No se pudo obtener una respuesta clara de la IA. Por favor, intenta reformular tu pregunta o verifica la configuración.\"; // Mensaje por defecto mejorado\n\nif (geminiResponse.candidates && geminiResponse.candidates.length > 0 &&\n    geminiResponse.candidates[0].content &&\n    geminiResponse.candidates[0].content.parts &&\n    geminiResponse.candidates[0].content.parts.length > 0 &&\n    geminiResponse.candidates[0].content.parts[0].text) {\n  outputText = geminiResponse.candidates[0].content.parts[0].text;\n} else if (geminiResponse.error) {\n  // Si Gemini devuelve un objeto de error explícito\n  outputText = `Error de la IA: ${geminiResponse.error.message || JSON.stringify(geminiResponse.error)}`;\n  // Adicionalmente, podrías querer registrar el error completo en n8n para depuración:\n  // console.error(\"Error de la API de Gemini:\", JSON.stringify(geminiResponse.error));\n} else {\n  // Si la estructura no es la esperada, pero no hay un error.error explícito\n  // Registrar la respuesta completa para depuración puede ser útil aquí.\n  // console.warn(\"Respuesta inesperada de Gemini:\", JSON.stringify(geminiResponse));\n  // Mantener el mensaje por defecto o uno más específico:\n  outputText = \"La IA devolvió una respuesta en un formato inesperado. Intenta reformular tu pregunta.\";\n}\n\nreturn [{\n  json: {\n    output: outputText,\n    mcp: true\n  }\n}];"
       },
       "id": "Function2",
       "name": "Respuesta MCP",
