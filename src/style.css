@@ -7,135 +7,200 @@
    para la interfaz de chat. Tailwind @apply se usará para consistencia. */
 
 body {
-  @apply bg-gray-200 flex justify-center items-center min-h-screen p-0 sm:p-4 m-0;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; /* Mantener consistencia de fuente */
+  @apply bg-gray-300 flex justify-center items-center min-h-screen p-4 m-0; /* Fondo ligeramente más oscuro */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-/* Contenedor principal de la aplicación de chat */
-#chat-app-container { /* Asumiendo que este es el nuevo contenedor principal en index.html */
-  @apply w-full h-screen sm:h-auto sm:max-w-2xl bg-white shadow-xl rounded-none sm:rounded-lg flex flex-col overflow-hidden;
-  /* Altura completa en móviles, altura auto con max en pantallas más grandes */
-  /* max-height en sm y superior para evitar que sea demasiado alto */
-  height: 100vh; /* Por defecto para llenar la pantalla del móvil */
+.iphone-container {
+  @apply flex justify-center items-center w-full h-full;
 }
 
-@media (min-width: 640px) { /* sm breakpoint de Tailwind */
-  #chat-app-container {
-    max-height: calc(100vh - 4rem); /* ej. 90vh o una altura específica como 700px */
-    height: auto; /* Permite que crezca con el contenido hasta max-height */
-  }
+.iphone {
+  @apply bg-black rounded-[60px] shadow-2xl overflow-hidden;
+  width: 390px; /* Ancho típico de iPhone 15 en puntos (CSS pixels) */
+  height: 844px; /* Altura típica de iPhone 15 en puntos */
+  padding: 16px; /* Simula el marco/bisel interno */
+  display: flex;
+  flex-direction: column;
+  position: relative; /* Para posicionar la barra inferior y notch */
+}
+
+.iphone-top {
+  @apply w-full h-[30px] mb-[8px]; /* Espacio para la muesca */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.iphone-notch {
+  @apply bg-black rounded-full;
+  width: 160px; /* Ancho de la isla dinámica/muesca */
+  height: 32px; /* Altura de la isla dinámica/muesca */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  position: absolute; /* Posicionamiento absoluto respecto a .iphone */
+  top: 18px; /* Ajustar para que quede dentro del padding del marco */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10; /* Por encima del contenido de la pantalla */
+}
+.iphone-camera {
+  @apply bg-gray-700 rounded-full;
+  width: 10px;
+  height: 10px;
+  margin-left: 15px; /* Simulación */
+}
+.iphone-speaker {
+   /* Podría ser una ranura, por ahora un punto */
+  @apply bg-gray-700 rounded-sm;
+  width: 40px;
+  height: 6px;
+  margin-right: 15px; /* Simulación */
 }
 
 
-/* Historial de mensajes del chat */
+.iphone-screen-content {
+  @apply bg-white w-full flex-grow rounded-[40px] overflow-hidden; /* Bordes redondeados internos de la pantalla */
+  display: flex;
+  flex-direction: column;
+  position: relative; /* Para que el z-index funcione correctamente con la muesca */
+}
+
+.chat-header { /* Estilos para el header dentro de la pantalla del iPhone */
+  @apply bg-blue-600 text-white text-base font-semibold text-center py-3 shadow-sm flex-shrink-0;
+  /* text-base y font-semibold para un look más de app */
+  border-top-left-radius: 0; /* Ajustar si es necesario por los bordes de iphone-screen-content */
+  border-top-right-radius: 0;
+}
+
 #chat-historial {
-  @apply flex-grow p-4 space-y-3 overflow-y-auto; /* space-y-3 para un poco más de espacio */
+  @apply flex-grow p-3 space-y-2 overflow-y-auto bg-gray-50; /* Fondo ligeramente diferente para el área de chat */
   /* Los colores de fondo y texto de las burbujas ya están definidos en main.js con Tailwind */
 }
 
 /* Estilos para las burbujas de mensajes (complementando Tailwind desde main.js) */
-.message-bubble > div { /* El div interno de la burbuja que contiene el texto/HTML */
-  word-break: break-word; /* Asegura que el texto largo se ajuste y no rompa el layout */
-  /* max-width, padding, rounded, shadow ya se aplican en main.js */
+.message-bubble > div {
+  word-break: break-word;
 }
 
 /* Formulario de entrada de mensajes */
-#form-vuelos { /* Reutilizando el ID existente, pero podría ser #chat-form */
-  @apply p-3 border-t border-gray-200 bg-gray-50;
+#form-vuelos {
+  @apply p-2 border-t border-gray-200 bg-gray-100 flex-shrink-0; /* Fondo más claro para el form */
 }
 
-#form-vuelos .flex { /* El div flex que envuelve input y button */
-  @apply gap-2;
+#form-vuelos .flex {
+  @apply gap-2 items-center;
 }
 
 #form-vuelos input[type="text"] {
-  @apply flex-grow border border-gray-300 rounded-lg px-3 py-2 text-sm;
+  @apply flex-grow border border-gray-300 rounded-full px-4 py-2 text-sm; /* Input redondeado */
   @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-  /* Quitar el color de fondo oscuro por defecto de :root si afecta */
-  background-color: #fff; /* Asegurar fondo blanco para input en modo oscuro */
-  color: #333; /* Asegurar texto oscuro para input en modo oscuro */
+  background-color: #fff;
+  color: #333;
 }
 
 #form-vuelos button[type="submit"] {
-  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md;
-  @apply transition duration-150 ease-in-out;
-  /* Resetear algunos estilos de botón por defecto de Vite si es necesario */
-  border: 1px solid transparent;
-  font-size: 0.875rem; /* text-sm */
-  line-height: 1.25rem;
+  @apply bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full; /* Botón redondeado y más pequeño */
+  @apply transition duration-150 ease-in-out flex items-center justify-center;
+  width: 36px; /* Tamaño fijo para botón circular */
+  height: 36px;
+  border: none;
 }
-button:hover {
-  border-color: transparent; /* Prevenir que el hover por defecto de Vite interfiera */
+#form-vuelos button[type="submit"] svg {
+  width: 20px; /* Ajustar tamaño del SVG */
+  height: 20px;
 }
+
 button:focus,
 button:focus-visible {
-  outline: 2px solid theme('colors.blue.500'); /* Adaptar focus ring */
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+
+.iphone-bottom-bar {
+  @apply w-[135px] h-[5px] bg-gray-400 rounded-full mx-auto mt-auto mb-[8px]; /* Barra de gestos */
+  position: absolute;
+  bottom: 10px; /* Dentro del padding del marco */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
 
 
 /* Estilos para el scrollbar (opcional, para mejorar apariencia) */
 #chat-historial::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
-
 #chat-historial::-webkit-scrollbar-track {
-  @apply bg-gray-100;
-  border-radius: 10px;
+  @apply bg-transparent; /* Track transparente dentro de la pantalla */
 }
-
 #chat-historial::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-lg; /* Un poco más claro que antes */
+  @apply bg-gray-300 rounded-full;
 }
-
 #chat-historial::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400; /* Un poco más claro que antes */
+  @apply bg-gray-400;
 }
 
-/* Limpiar algunos estilos globales de Vite que podrían interferir con el layout de chat */
-#app { /* Si #app es el contenedor del #chat-app-container */
-  max-width: none; /* Permitir que #chat-app-container defina su propio ancho */
+/* Limpiar algunos estilos globales de Vite que podrían interferir */
+#app {
+  max-width: none;
   margin: 0;
   padding: 0;
-  text-align: left; /* Resetear text-align center si no se desea */
+  text-align: left;
 }
 
-h1 { /* Si no se usa h1 en el chat, se puede ignorar o ajustar */
-  /* font-size: 3.2em; */
-  /* line-height: 1.1; */
-}
-
-/* Mantener el modo oscuro de Vite si se desea, pero asegurar que los componentes del chat
-   tengan los colores correctos. Las clases de Tailwind para bg y text en main.js
-   deberían manejar esto bien para las burbujas. El input y el botón se han ajustado arriba. */
+/* Adaptaciones para modo oscuro */
 @media (prefers-color-scheme: dark) {
   body {
-    @apply bg-gray-800; /* Un fondo más oscuro para el body en modo oscuro */
+    @apply bg-gray-800;
   }
 
-  #chat-app-container {
-    @apply bg-gray-700 shadow-xl; /* Contenedor del chat un poco más oscuro */
+  .iphone {
+    @apply bg-gray-900; /* Marco más oscuro */
+    /* Podríamos añadir un borde sutil para simular el metal si es necesario */
+    /* box-shadow: 0 0 30px rgba(255,255,255,0.1); */
+  }
+
+  .iphone-notch {
+    @apply bg-gray-900; /* Notch del mismo color que el marco */
+  }
+  .iphone-camera, .iphone-speaker {
+    @apply bg-gray-700; /* Elementos del notch ligeramente visibles */
+  }
+
+  .iphone-screen-content {
+    @apply bg-black; /* Pantalla OLED negra */
+  }
+
+  .chat-header {
+    @apply bg-gray-750 text-gray-200; /* Header más oscuro */
   }
 
   #chat-historial {
-    /* Las burbujas ya tienen sus propios colores definidos en main.js */
-  }
-  #chat-historial::-webkit-scrollbar-track {
-    @apply bg-gray-600;
+    @apply bg-black; /* Fondo del chat igual a la pantalla */
   }
   #chat-historial::-webkit-scrollbar-thumb {
-    @apply bg-gray-500;
+    @apply bg-gray-600;
   }
   #chat-historial::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-gray-500;
   }
 
   #form-vuelos {
-    @apply border-gray-600 bg-gray-750; /* Ligeramente diferente para el formulario */
+    @apply border-gray-700 bg-gray-850;
   }
 
   #form-vuelos input[type="text"] {
-    @apply bg-gray-600 border-gray-500 text-gray-50;
+    @apply bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400;
     @apply focus:ring-blue-500;
+  }
+
+  #form-vuelos button[type="submit"] {
+    @apply bg-blue-500 hover:bg-blue-600;
+  }
+  .iphone-bottom-bar {
+    @apply bg-gray-600;
   }
 }
