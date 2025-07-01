@@ -6,31 +6,40 @@
     <title>Buscador de Vuelos IA - Chat</title>
     <link rel="stylesheet" href="/src/style.css">
   </head>
-  <body> <!-- Las clases del body ahora se manejan en style.css -->
-    <div id="chat-app-container"> <!-- Contenedor principal con ID para estilos CSS -->
-      <header class="bg-blue-600 text-white text-lg font-bold text-center py-3 shadow-sm">
-        Buscador de Vuelos con IA
-      </header>
-
-      <div id="chat-historial">
-        <!-- Las burbujas de chat se añadirán aquí por JS -->
-        <!-- El mensaje de bienvenida se añade desde main.js -->
-      </div>
-
-      <form id="form-vuelos"> <!-- El padding y fondo se manejan en style.css -->
-        <div class="flex"> <!-- Clases de gap ahora en style.css -->
-          <input type="text" id="input-vuelos" placeholder="Escribe tu consulta..." required
-                 class="flex-grow"> <!-- Clases de estilo ahora en style.css -->
-          <button type="submit" id="enviar-vuelos" aria-label="Enviar">
-            <!-- SVG como texto o un texto simple para el botón -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M4.698 4.034l16.302 7.966l-16.302 7.966a.503 .503 0 0 1 -.546 -.124a.555 .555 0 0 1 -.12 -.568l2.468 -7.274l-2.468 -7.274a.555 .555 0 0 1 .12 -.568a.503 .503 0 0 1 .546 -.124z" />
-              <path d="M6.5 12h14.5" />
-            </svg>
-          </button>
+  <body>
+    <div class="iphone-container">
+      <div class="iphone">
+        <div class="iphone-top">
+          <div class="iphone-notch">
+            <div class="iphone-camera"></div>
+            <div class="iphone-speaker"></div>
+          </div>
         </div>
-      </form>
+        <div class="iphone-screen-content"> <!-- Este div contendrá todo lo visible en la pantalla -->
+          <header class="chat-header bg-blue-600 text-white text-lg font-bold text-center py-3 shadow-sm">
+            Buscador de Vuelos con IA
+          </header>
+
+          <div id="chat-historial">
+            <!-- Las burbujas de chat se añadirán aquí por JS -->
+          </div>
+
+          <form id="form-vuelos">
+            <div class="flex">
+              <input type="text" id="input-vuelos" placeholder="Escribe tu consulta..." required class="flex-grow">
+              <button type="submit" id="enviar-vuelos" aria-label="Enviar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M4.698 4.034l16.302 7.966l-16.302 7.966a.503 .503 0 0 1 -.546 -.124a.555 .555 0 0 1 -.12 -.568l2.468 -7.274l-2.468 -7.274a.555 .555 0 0 1 .12 -.568a.503 .503 0 0 1 .546 -.124z" />
+                  <path d="M6.5 12h14.5" />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="iphone-bottom-bar"></div> <!-- Para la barra inferior del iPhone X y posteriores -->
+        {/* Podríamos añadir botones laterales visuales aquí como divs hermanos de iphone-screen-content si es necesario */}
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
